@@ -2,9 +2,7 @@ package com.rsupport.notice.management.dto;
 
 import com.rsupport.notice.management.entity.Notice;
 import com.rsupport.notice.management.enums.UseStatus;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;

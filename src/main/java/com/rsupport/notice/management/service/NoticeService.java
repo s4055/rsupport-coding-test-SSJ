@@ -11,7 +11,8 @@ public interface NoticeService {
       NoticeCreateRequest request, List<MultipartFile> multipartFileList);
 
   NoticeUpdateResponse updateNotice(
-      Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList) throws CustomException;
+      Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
+      throws CustomException;
 
   NoticeDeleteResponse deleteNotice(Long noticeId) throws CustomException;
 

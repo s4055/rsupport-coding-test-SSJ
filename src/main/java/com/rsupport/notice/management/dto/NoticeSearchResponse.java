@@ -1,11 +1,10 @@
 package com.rsupport.notice.management.dto;
 
 import com.rsupport.notice.management.entity.Notice;
-import lombok.Getter;
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 @Getter
 public class NoticeSearchResponse extends CommonResponse {

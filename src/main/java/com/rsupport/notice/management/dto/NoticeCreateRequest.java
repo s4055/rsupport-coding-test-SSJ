@@ -1,6 +1,5 @@
 package com.rsupport.notice.management.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

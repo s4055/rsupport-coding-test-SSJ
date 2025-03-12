@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CommonResponse {
-
-    private int resultCode;
-    private String message;
+  private int resultCode;
+  private String message;
 }

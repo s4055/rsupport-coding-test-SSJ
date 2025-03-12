@@ -1,9 +1,7 @@
 package com.rsupport.notice.management.dto;
 
 import com.rsupport.notice.management.entity.Notice;
-
 import java.time.LocalDate;
-
 import lombok.Getter;
 
 @Getter

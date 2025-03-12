@@ -1,12 +1,8 @@
 package com.rsupport.notice.management.entity;
 
 import com.rsupport.notice.management.enums.UseStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
-
+import lombok.Getter;
 
 @Getter
 @Entity
