@@ -2,6 +2,8 @@ package com.rsupport.notice.management.dto;
 
 import com.rsupport.notice.management.entity.Notice;
 import com.rsupport.notice.management.enums.UseStatus;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +14,7 @@ public class NoticeDetailResponse extends CommonResponse {
 
   private String title;
   private String content;
-  private LocalDateTime createDate;
+  private LocalDate createDate;
   private Integer viewCount;
   private String author;
   private List<AttachmentDto> attachments;

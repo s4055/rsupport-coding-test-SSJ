@@ -64,4 +64,12 @@ public class NoticeController {
     NoticeDetailResponse response = noticeService.getNotice(noticeId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
+
+  // 공지사항 검색
+  @GetMapping("/search")
+  public ResponseEntity<NoticeSearchResponse> searchNotices(
+      @ModelAttribute @Valid NoticeSearchRequest request) {
+    NoticeSearchResponse response = noticeService.searchNotices(request);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
 }

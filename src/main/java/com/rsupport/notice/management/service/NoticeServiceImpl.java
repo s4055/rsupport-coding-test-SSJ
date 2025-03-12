@@ -85,4 +85,18 @@ public class NoticeServiceImpl implements NoticeService {
     return new NoticeDetailResponse(
         ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notice);
   }
+
+  @Override
+  public NoticeSearchResponse searchNotices(NoticeSearchRequest request) {
+    PageRequest pageable = PageRequest.of(request.getPage(), request.getSize());
+    Page<Notice> notices =
+        noticeRepository.findByNoticeSearch(
+            request.getSearchType(),
+            request.getKeyword(),
+            request.getStartDate(),
+            request.getEndDate(),
+            pageable);
+    return new NoticeSearchResponse(
+        ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notices);
+  }
 }

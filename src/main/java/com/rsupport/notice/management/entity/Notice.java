@@ -33,14 +33,13 @@ public class Notice {
   private String content;
 
   @Column(name = "start_date", nullable = false)
-  private LocalDate startDate;
+  private LocalDateTime startDate;
 
   @Column(name = "end_date", nullable = false)
-  private LocalDate endDate;
+  private LocalDateTime endDate;
 
-  @CreationTimestamp
   @Column(name = "create_date", nullable = false)
-  private LocalDateTime createDate;
+  private LocalDate createDate;
 
   @Column(name = "view_count")
   private Integer viewCount = 0;
@@ -56,6 +55,7 @@ public class Notice {
     this.content = request.getContent();
     this.startDate = request.getStartDate();
     this.endDate = request.getEndDate();
+    this.createDate = LocalDate.now();
     this.author = request.getAuthor();
   }
 
