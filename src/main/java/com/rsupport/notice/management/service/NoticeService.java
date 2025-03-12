@@ -17,4 +17,7 @@ public interface NoticeService {
 
   NoticeDeleteResponse deleteNotice(Long noticeId) throws CustomException;
 
+  NoticePageResponse getNotices(NoticePageRequest request);
+
+
 }

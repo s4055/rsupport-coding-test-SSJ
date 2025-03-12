@@ -43,9 +43,18 @@ public class NoticeController {
 
   // 공지사항 삭제
   @DeleteMapping("/{noticeId}")
-  public ResponseEntity<NoticeDeleteResponse> deleteNotice(@PathVariable Long noticeId)
+  public ResponseEntity<NoticeDeleteResponse> deleteNotice(@PathVariable("noticeId") Long noticeId)
       throws CustomException {
     NoticeDeleteResponse response = noticeService.deleteNotice(noticeId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
+
+  // 공지사항 목록
+  @GetMapping
+  public ResponseEntity<NoticePageResponse> getNotices(
+      @ModelAttribute @Valid NoticePageRequest request) {
+    NoticePageResponse response = noticeService.getNotices(request);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
 }
