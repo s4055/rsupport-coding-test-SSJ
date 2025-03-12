@@ -2,6 +2,9 @@ package com.rsupport.notice.management.controller;
 
 import com.rsupport.notice.management.dto.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.NoticeCreateResponse;
+import com.rsupport.notice.management.dto.NoticeUpdateRequest;
+import com.rsupport.notice.management.dto.NoticeUpdateResponse;
+import com.rsupport.notice.management.exception.CustomException;
 import com.rsupport.notice.management.service.NoticeService;
 import java.util.List;
 import javax.validation.Valid;
@@ -28,4 +31,17 @@ public class NoticeController {
     NoticeCreateResponse response = noticeService.createNotice(request, multipartFileList);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
+
+  // 공지사항 수정
+  @PutMapping("/{noticeId}")
+  public ResponseEntity<NoticeUpdateResponse> updateNotice(
+      @PathVariable("noticeId") Long noticeId,
+      @RequestPart(value = "request") @Valid NoticeUpdateRequest request,
+      @RequestPart(value = "file", required = false) List<MultipartFile> multipartFileList)
+      throws CustomException {
+    NoticeUpdateResponse response =
+        noticeService.updateNotice(noticeId, request, multipartFileList);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
 }

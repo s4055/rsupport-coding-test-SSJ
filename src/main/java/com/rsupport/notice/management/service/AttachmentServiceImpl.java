@@ -2,6 +2,7 @@ package com.rsupport.notice.management.service;
 
 import com.rsupport.notice.management.entity.Attachment;
 import com.rsupport.notice.management.entity.Notice;
+import com.rsupport.notice.management.enums.UseStatus;
 import com.rsupport.notice.management.repository.AttachmentRepository;
 import java.io.File;
 import java.io.IOException;
@@ -40,5 +41,10 @@ public class AttachmentServiceImpl implements AttachmentService {
     } catch (IOException e) {
       throw new RuntimeException("파일 저장 실패", e);
     }
+  }
+
+  @Override
+  public void updateAttachment(Notice notice, UseStatus useStatus) {
+    attachmentRepository.updateNoticeIsUse(notice.getNoticeId(), useStatus);
   }
 }

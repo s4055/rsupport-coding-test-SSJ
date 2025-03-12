@@ -2,7 +2,11 @@ package com.rsupport.notice.management.service;
 
 import com.rsupport.notice.management.dto.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.NoticeCreateResponse;
+import com.rsupport.notice.management.dto.NoticeUpdateRequest;
+import com.rsupport.notice.management.dto.NoticeUpdateResponse;
 import com.rsupport.notice.management.entity.Notice;
+import com.rsupport.notice.management.enums.UseStatus;
+import com.rsupport.notice.management.exception.CustomException;
 import com.rsupport.notice.management.exception.ErrorCode;
 import com.rsupport.notice.management.repository.NoticeRepository;
 import java.util.List;
@@ -33,4 +37,26 @@ public class NoticeServiceImpl implements NoticeService {
 
     return new NoticeCreateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
   }
+
+  @Transactional
+  @Override
+  public NoticeUpdateResponse updateNotice(
+      Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
+      throws CustomException {
+    Notice notice =
+        noticeRepository
+            .findById(noticeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
+    notice.updateNotice(request);
+    noticeRepository.save(notice);
+
+    attachmentService.updateAttachment(notice, UseStatus.N);
+
+    if (multipartFileList != null && !multipartFileList.isEmpty()) {
+      multipartFileList.forEach(file -> attachmentService.addAttachment(notice, file));
+    }
+
+    return new NoticeUpdateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
+  }
+
 }

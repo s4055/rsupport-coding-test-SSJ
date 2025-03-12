@@ -1,15 +1,14 @@
 package com.rsupport.notice.management.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import com.rsupport.notice.management.enums.UseStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+
+
+@Getter
 @Entity
 @Table(name = "Attachment")
 public class Attachment {
@@ -23,6 +22,10 @@ public class Attachment {
 
   @Column(name = "file_path", nullable = false, length = 100)
   private String filePath;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "is_use", nullable = false, length = 1)
+  private UseStatus isUse = UseStatus.Y;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "notice_id")

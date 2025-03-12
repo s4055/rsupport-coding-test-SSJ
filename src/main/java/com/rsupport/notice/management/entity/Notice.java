@@ -1,6 +1,7 @@
 package com.rsupport.notice.management.entity;
 
 import com.rsupport.notice.management.dto.NoticeCreateRequest;
+import com.rsupport.notice.management.dto.NoticeUpdateRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,11 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Entity
 @Table(name = "Notice")
+@NoArgsConstructor
 public class Notice {
 
   @Id
@@ -54,5 +57,12 @@ public class Notice {
     this.startDate = request.getStartDate();
     this.endDate = request.getEndDate();
     this.author = request.getAuthor();
+  }
+
+  public void updateNotice(NoticeUpdateRequest request) {
+    this.title = request.getTitle();
+    this.content = request.getContent();
+    this.startDate = request.getStartDate();
+    this.endDate = request.getEndDate();
   }
 }
