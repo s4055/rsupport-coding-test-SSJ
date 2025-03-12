@@ -57,4 +57,11 @@ public class NoticeController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
+  // 공지사항 상세
+  @GetMapping("/{noticeId}")
+  public ResponseEntity<NoticeDetailResponse> getNotice(@PathVariable("noticeId") Long noticeId)
+      throws CustomException {
+    NoticeDetailResponse response = noticeService.getNotice(noticeId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
 }

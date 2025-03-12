@@ -19,5 +19,5 @@ public interface NoticeService {
 
   NoticePageResponse getNotices(NoticePageRequest request);
 
-
+  NoticeDetailResponse getNotice(Long noticeId) throws CustomException;
 }

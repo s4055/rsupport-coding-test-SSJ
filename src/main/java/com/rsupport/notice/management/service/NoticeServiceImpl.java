@@ -6,8 +6,6 @@ import com.rsupport.notice.management.enums.UseStatus;
 import com.rsupport.notice.management.exception.CustomException;
 import com.rsupport.notice.management.exception.ErrorCode;
 import com.rsupport.notice.management.repository.NoticeRepository;
-
-import java.awt.print.Pageable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,5 +76,13 @@ public class NoticeServiceImpl implements NoticeService {
     return new NoticePageResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notices);
   }
 
-
+  @Override
+  public NoticeDetailResponse getNotice(Long noticeId) throws CustomException {
+    Notice notice =
+        noticeRepository
+            .findById(noticeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
+    return new NoticeDetailResponse(
+        ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notice);
+  }
 }
