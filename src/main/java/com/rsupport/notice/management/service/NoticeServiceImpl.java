@@ -1,9 +1,6 @@
 package com.rsupport.notice.management.service;
 
-import com.rsupport.notice.management.dto.NoticeCreateRequest;
-import com.rsupport.notice.management.dto.NoticeCreateResponse;
-import com.rsupport.notice.management.dto.NoticeUpdateRequest;
-import com.rsupport.notice.management.dto.NoticeUpdateResponse;
+import com.rsupport.notice.management.dto.*;
 import com.rsupport.notice.management.entity.Notice;
 import com.rsupport.notice.management.enums.UseStatus;
 import com.rsupport.notice.management.exception.CustomException;
@@ -57,6 +54,17 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     return new NoticeUpdateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
+  }
+
+  @Transactional
+  @Override
+  public NoticeDeleteResponse deleteNotice(Long noticeId) throws CustomException {
+    Notice notice =
+        noticeRepository
+            .findById(noticeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
+    noticeRepository.delete(notice);
+    return new NoticeDeleteResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
   }
 
 }

@@ -1,9 +1,6 @@
 package com.rsupport.notice.management.controller;
 
-import com.rsupport.notice.management.dto.NoticeCreateRequest;
-import com.rsupport.notice.management.dto.NoticeCreateResponse;
-import com.rsupport.notice.management.dto.NoticeUpdateRequest;
-import com.rsupport.notice.management.dto.NoticeUpdateResponse;
+import com.rsupport.notice.management.dto.*;
 import com.rsupport.notice.management.exception.CustomException;
 import com.rsupport.notice.management.service.NoticeService;
 import java.util.List;
@@ -44,4 +41,11 @@ public class NoticeController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
+  // 공지사항 삭제
+  @DeleteMapping("/{noticeId}")
+  public ResponseEntity<NoticeDeleteResponse> deleteNotice(@PathVariable Long noticeId)
+      throws CustomException {
+    NoticeDeleteResponse response = noticeService.deleteNotice(noticeId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
 }
