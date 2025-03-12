@@ -1,6 +1,9 @@
 server:
   port: 8081
 
+file:
+  upload-dir: upload/
+
 spring:
   servlet:
     multipart:
