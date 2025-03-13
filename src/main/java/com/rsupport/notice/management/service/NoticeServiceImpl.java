@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,8 @@ public class NoticeServiceImpl implements NoticeService {
   private final NoticeViewCountService viewCountService;
   private final NoticeRepository noticeRepository;
   private final AttachmentRepository attachmentRepository;
+  private final RedisTemplate<String, Object> redisTemplate;
+  private static final String NOTICE_SEARCH_CACHE_PREFIX = "notice:search:";
 
   @Transactional
   @Override
@@ -153,13 +156,15 @@ public class NoticeServiceImpl implements NoticeService {
   @Override
   public NoticeSearchResponse searchNotices(NoticeSearchRequest request) {
     PageRequest pageable = PageRequest.of(request.getPage(), request.getSize());
+
     Page<Notice> notices =
-        noticeRepository.findByNoticeSearch(
-            request.getSearchType(),
+        noticeRepository.searchNotices(
             request.getKeyword(),
+            request.getSearchType(),
             request.getStartDate(),
             request.getEndDate(),
             pageable);
+
     return new NoticeSearchResponse(
         ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notices);
   }

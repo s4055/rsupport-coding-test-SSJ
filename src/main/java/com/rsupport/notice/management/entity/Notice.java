@@ -5,13 +5,8 @@ import com.rsupport.notice.management.dto.NoticeUpdateRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +15,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Entity
-@Table(name = "Notice")
+@Table(name = "Notice", indexes = {
+        @Index(name = "idx_notice_title", columnList = "title"),
+        @Index(name = "idx_notice_create_date", columnList = "create_date")
+})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Notice {

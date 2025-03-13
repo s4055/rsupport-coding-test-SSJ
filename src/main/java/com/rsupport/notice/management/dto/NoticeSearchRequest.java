@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @AllArgsConstructor
 public class NoticeSearchRequest {
+  @Min(value = 1) // 제목 + 내용
+  @Max(value = 2) // 제목
   private int searchType;
 
   @Size(min = 2, message = "최소 2 글자 이상 입니다.")
