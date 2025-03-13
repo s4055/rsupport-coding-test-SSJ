@@ -2,11 +2,16 @@ package com.rsupport.notice.management.entity;
 
 import com.rsupport.notice.management.enums.UseStatus;
 import javax.persistence.*;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "Attachment")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Attachment {
 
   @Id

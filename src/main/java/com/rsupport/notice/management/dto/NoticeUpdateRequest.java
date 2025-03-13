@@ -2,6 +2,7 @@ package com.rsupport.notice.management.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,8 @@ public class NoticeUpdateRequest {
   @NotNull(message = "공지 종료일시는 필수 입니다.")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endDate;
+
+  private List<AttachmentDto> attachments;
 
   @AssertTrue(message = "공지 시작일시는 현재 일시 보다 이전일 수 없습니다.")
   public boolean isStartDateValid() {

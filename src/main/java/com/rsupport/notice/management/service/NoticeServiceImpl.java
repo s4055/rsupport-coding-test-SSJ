@@ -1,14 +1,20 @@
 package com.rsupport.notice.management.service;
 
 import com.rsupport.notice.management.dto.*;
+import com.rsupport.notice.management.entity.Attachment;
 import com.rsupport.notice.management.entity.Notice;
-import com.rsupport.notice.management.enums.UseStatus;
 import com.rsupport.notice.management.exception.CustomException;
 import com.rsupport.notice.management.exception.ErrorCode;
+import com.rsupport.notice.management.repository.AttachmentRepository;
 import com.rsupport.notice.management.repository.NoticeRepository;
+import com.rsupport.notice.management.utils.NoticeUtil;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,8 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class NoticeServiceImpl implements NoticeService {
 
+  @Value("${file.upload-dir}")
+  private String uploadDir;
+
   private final NoticeRepository noticeRepository;
-  private final AttachmentService attachmentService;
+  private final AttachmentRepository attachmentRepository;
 
   @Transactional
   @Override
@@ -31,7 +40,12 @@ public class NoticeServiceImpl implements NoticeService {
     log.info("공지사항 등록 = {}", notice.getNoticeId());
 
     if (multipartFileList != null && !multipartFileList.isEmpty()) {
-      multipartFileList.forEach(file -> attachmentService.addAttachment(notice, file));
+      List<Attachment> newAttachments = new ArrayList<>();
+      for (MultipartFile multipartFile : multipartFileList) {
+        String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
+        newAttachments.add(new Attachment(fileName, "/" + uploadDir + fileName, notice));
+      }
+      attachmentRepository.saveAll(newAttachments);
     }
 
     return new NoticeCreateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
@@ -47,12 +61,39 @@ public class NoticeServiceImpl implements NoticeService {
             .findById(noticeId)
             .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
     notice.updateNotice(request);
+
     noticeRepository.save(notice);
 
-    attachmentService.updateAttachment(notice, UseStatus.N);
+    // 기존 첨부파일 조회
+    List<Attachment> attachments = attachmentRepository.findByNotice_noticeId(notice.getNoticeId());
+    Set<String> oldFileNames =
+        request.getAttachments().stream()
+            .map(AttachmentDto::getFileName)
+            .collect(Collectors.toSet());
 
+    // 변경된 첨부파일 목록 (삭제된 첨부파일 찾기)
+    List<Attachment> filesToDelete =
+        attachments.stream()
+            .filter(file -> !oldFileNames.contains(file.getFileName()))
+            .collect(Collectors.toList());
+
+    // 첨부파일 삭제
+    if (!filesToDelete.isEmpty()) {
+      filesToDelete.forEach(
+          file -> {
+            NoticeUtil.deleteFile(uploadDir, file.getFileName());
+            attachmentRepository.delete(file);
+          });
+    }
+
+    // 신규 첨부파일 저장
     if (multipartFileList != null && !multipartFileList.isEmpty()) {
-      multipartFileList.forEach(file -> attachmentService.addAttachment(notice, file));
+      List<Attachment> newAttachments = new ArrayList<>();
+      for (MultipartFile multipartFile : multipartFileList) {
+        String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
+        newAttachments.add(new Attachment(fileName, "/" + uploadDir + fileName, notice));
+      }
+      attachmentRepository.saveAll(newAttachments);
     }
 
     return new NoticeUpdateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
