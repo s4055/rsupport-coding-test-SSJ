@@ -2,6 +2,7 @@ package com.rsupport.notice.management.exception;
 
 import com.rsupport.notice.management.dto.CommonResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +21,15 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<CommonResponse> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException e) {
+    ErrorCode errorCode = ErrorCode.BAD_REQUEST;
+    CommonResponse errorResponse =
+        new CommonResponse(errorCode.getResultCode(), errorCode.getMessage());
+    return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
+  }
+
+  // 바인딩 예외
+  @ExceptionHandler(BindException.class)
+  public ResponseEntity<CommonResponse> handleBindException(BindException e) {
     ErrorCode errorCode = ErrorCode.BAD_REQUEST;
     CommonResponse errorResponse =
         new CommonResponse(errorCode.getResultCode(), errorCode.getMessage());

@@ -26,12 +26,12 @@ public class NoticeCreateRequest {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endDate;
 
-  @AssertTrue(message = "공지 시작일시는 현재 일시보다 이전일 수 없습니다.")
+  @AssertTrue(message = "공지 시작일시는 현재 일시 보다 이전일 수 없습니다.")
   public boolean isStartDateValid() {
     return startDate.isAfter(LocalDateTime.now());
   }
 
-  @AssertTrue(message = "공지 종료일시는 공지 시작일보다 이전일 수 없습니다.")
+  @AssertTrue(message = "공지 종료일시는 공지 시작일시 보다 이전일 수 없습니다.")
   public boolean isEndDateValid() {
     return endDate.isAfter(startDate);
   }
