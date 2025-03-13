@@ -1,7 +1,6 @@
 package com.rsupport.notice.management.dto;
 
 import com.rsupport.notice.management.entity.Notice;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,12 +16,12 @@ public class NoticeDetailResponse extends CommonResponse {
   private String author;
   private List<AttachmentDto> attachments;
 
-  public NoticeDetailResponse(int resultCode, String message, Notice notice) {
+  public NoticeDetailResponse(int resultCode, String message, Notice notice, int redisViewCount) {
     super(resultCode, message);
     this.title = notice.getTitle();
     this.content = notice.getContent();
     this.createDate = notice.getCreateDate();
-    this.viewCount = notice.getViewCount();
+    this.viewCount = notice.getViewCount() + redisViewCount;
     this.author = notice.getAuthor();
     this.attachments =
         notice.getAttachments().stream().map(AttachmentDto::new).collect(Collectors.toList());

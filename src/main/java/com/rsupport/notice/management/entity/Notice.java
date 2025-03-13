@@ -2,7 +2,6 @@ package com.rsupport.notice.management.entity;
 
 import com.rsupport.notice.management.dto.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.NoticeUpdateRequest;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +58,10 @@ public class Notice {
 
   @OneToMany(mappedBy = "notice")
   private List<Attachment> attachments = new ArrayList<>();
+
+  public void incrementViewCount(int count) {
+    this.viewCount += count;
+  }
 
   public Notice(NoticeCreateRequest request, boolean hasAttachment) {
     this.title = request.getTitle();

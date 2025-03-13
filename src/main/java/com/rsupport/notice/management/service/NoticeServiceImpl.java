@@ -5,6 +5,7 @@ import com.rsupport.notice.management.entity.Attachment;
 import com.rsupport.notice.management.entity.Notice;
 import com.rsupport.notice.management.exception.CustomException;
 import com.rsupport.notice.management.exception.ErrorCode;
+import com.rsupport.notice.management.redis.NoticeViewCountService;
 import com.rsupport.notice.management.repository.AttachmentRepository;
 import com.rsupport.notice.management.repository.NoticeRepository;
 import com.rsupport.notice.management.utils.NoticeUtil;
@@ -14,8 +15,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +30,7 @@ public class NoticeServiceImpl implements NoticeService {
   @Value("${file.upload-dir}")
   private String uploadDir;
 
+  private final NoticeViewCountService viewCountService;
   private final NoticeRepository noticeRepository;
   private final AttachmentRepository attachmentRepository;
 
@@ -65,7 +65,8 @@ public class NoticeServiceImpl implements NoticeService {
             .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
 
     boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
-    boolean isExistAttachments = request.getAttachments() != null && !request.getAttachments().isEmpty();
+    boolean isExistAttachments =
+        request.getAttachments() != null && !request.getAttachments().isEmpty();
 
     notice.updateNotice(request, hasAttachment, isExistAttachments);
 
@@ -116,11 +117,10 @@ public class NoticeServiceImpl implements NoticeService {
 
     List<Attachment> attachments = attachmentRepository.findByNotice_noticeId(notice.getNoticeId());
 
-    List<String> fileNames = attachments.stream()
-            .map(Attachment::getFileName)
-            .collect(Collectors.toList());
+    List<String> fileNames =
+        attachments.stream().map(Attachment::getFileName).collect(Collectors.toList());
 
-    for (String fileName: fileNames) {
+    for (String fileName : fileNames) {
       NoticeUtil.deleteFile(uploadDir, fileName);
     }
 
@@ -144,8 +144,10 @@ public class NoticeServiceImpl implements NoticeService {
         noticeRepository
             .findById(noticeId)
             .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
+    int redisViewCount = viewCountService.getViewCount(noticeId);
+    viewCountService.incrementViewCount(noticeId);
     return new NoticeDetailResponse(
-        ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notice);
+        ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notice, redisViewCount);
   }
 
   @Override
