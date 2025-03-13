@@ -1,8 +1,6 @@
 package com.rsupport.notice.management.entity;
 
-import com.rsupport.notice.management.enums.UseStatus;
 import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +21,6 @@ public class Attachment {
 
   @Column(name = "file_path", nullable = false, length = 100)
   private String filePath;
-
-  @Enumerated(EnumType.STRING)
-  @Column(name = "is_use", nullable = false, length = 1)
-  private UseStatus isUse = UseStatus.Y;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "notice_id")

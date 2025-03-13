@@ -4,6 +4,7 @@ import com.rsupport.notice.management.dto.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.NoticeUpdateRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,10 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Entity
@@ -40,31 +42,40 @@ public class Notice {
   @Column(name = "end_date", nullable = false)
   private LocalDateTime endDate;
 
+  @CreationTimestamp
   @Column(name = "create_date", nullable = false)
-  private LocalDate createDate;
+  private LocalDateTime createDate;
 
+  @ColumnDefault("0")
   @Column(name = "view_count")
   private Integer viewCount = 0;
 
   @Column(name = "author", nullable = false, length = 50)
   private String author;
 
-  @OneToMany(mappedBy = "notice")
-  private List<Attachment> attachments;
+  @ColumnDefault("false")
+  @Column(name = "has_attachment", nullable = false)
+  private Boolean hasAttachment = false;
 
-  public Notice(NoticeCreateRequest request) {
+  @OneToMany(mappedBy = "notice")
+  private List<Attachment> attachments = new ArrayList<>();
+
+  public Notice(NoticeCreateRequest request, boolean hasAttachment) {
     this.title = request.getTitle();
     this.content = request.getContent();
     this.startDate = request.getStartDate();
     this.endDate = request.getEndDate();
-    this.createDate = LocalDate.now();
+    this.createDate = LocalDateTime.now();
     this.author = request.getAuthor();
+    this.hasAttachment = hasAttachment;
   }
 
-  public void updateNotice(NoticeUpdateRequest request) {
+  public void updateNotice(
+      NoticeUpdateRequest request, boolean hasAttachment, boolean isExistAttachments) {
     this.title = request.getTitle();
     this.content = request.getContent();
     this.startDate = request.getStartDate();
     this.endDate = request.getEndDate();
+    this.hasAttachment = isExistAttachments || hasAttachment;
   }
 }

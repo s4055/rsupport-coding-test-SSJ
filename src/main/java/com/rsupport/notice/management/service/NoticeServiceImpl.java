@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,10 +38,11 @@ public class NoticeServiceImpl implements NoticeService {
   @Override
   public NoticeCreateResponse createNotice(
       NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
-    Notice notice = noticeRepository.save(new Notice(request));
+    boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
+    Notice notice = noticeRepository.save(new Notice(request, hasAttachment));
     log.info("공지사항 등록 = {}", notice.getNoticeId());
 
-    if (multipartFileList != null && !multipartFileList.isEmpty()) {
+    if (hasAttachment) {
       List<Attachment> newAttachments = new ArrayList<>();
       for (MultipartFile multipartFile : multipartFileList) {
         String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
@@ -60,7 +63,11 @@ public class NoticeServiceImpl implements NoticeService {
         noticeRepository
             .findById(noticeId)
             .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
-    notice.updateNotice(request);
+
+    boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
+    boolean isExistAttachments = request.getAttachments() != null && !request.getAttachments().isEmpty();
+
+    notice.updateNotice(request, hasAttachment, isExistAttachments);
 
     noticeRepository.save(notice);
 
@@ -87,7 +94,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     // 신규 첨부파일 저장
-    if (multipartFileList != null && !multipartFileList.isEmpty()) {
+    if (hasAttachment) {
       List<Attachment> newAttachments = new ArrayList<>();
       for (MultipartFile multipartFile : multipartFileList) {
         String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
@@ -106,7 +113,21 @@ public class NoticeServiceImpl implements NoticeService {
         noticeRepository
             .findById(noticeId)
             .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
+
+    List<Attachment> attachments = attachmentRepository.findByNotice_noticeId(notice.getNoticeId());
+
+    List<String> fileNames = attachments.stream()
+            .map(Attachment::getFileName)
+            .collect(Collectors.toList());
+
+    for (String fileName: fileNames) {
+      NoticeUtil.deleteFile(uploadDir, fileName);
+    }
+
+    attachmentRepository.deleteByFiles(notice.getNoticeId());
+
     noticeRepository.delete(notice);
+
     return new NoticeDeleteResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
   }
 
