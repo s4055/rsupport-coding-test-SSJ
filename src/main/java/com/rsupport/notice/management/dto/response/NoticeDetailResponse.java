@@ -1,5 +1,7 @@
-package com.rsupport.notice.management.dto;
+package com.rsupport.notice.management.dto.response;
 
+import com.rsupport.notice.management.dto.common.AttachmentDto;
+import com.rsupport.notice.management.dto.common.CommonResponse;
 import com.rsupport.notice.management.entity.Notice;
 import java.time.LocalDateTime;
 import java.util.List;

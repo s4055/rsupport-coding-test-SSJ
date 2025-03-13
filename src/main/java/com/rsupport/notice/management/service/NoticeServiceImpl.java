@@ -1,6 +1,11 @@
 package com.rsupport.notice.management.service;
 
-import com.rsupport.notice.management.dto.*;
+import com.rsupport.notice.management.dto.common.AttachmentDto;
+import com.rsupport.notice.management.dto.request.NoticeCreateRequest;
+import com.rsupport.notice.management.dto.request.NoticePageRequest;
+import com.rsupport.notice.management.dto.request.NoticeSearchRequest;
+import com.rsupport.notice.management.dto.request.NoticeUpdateRequest;
+import com.rsupport.notice.management.dto.response.*;
 import com.rsupport.notice.management.entity.Attachment;
 import com.rsupport.notice.management.entity.Notice;
 import com.rsupport.notice.management.exception.CustomException;
@@ -18,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,13 +38,11 @@ public class NoticeServiceImpl implements NoticeService {
   private final NoticeViewCountService viewCountService;
   private final NoticeRepository noticeRepository;
   private final AttachmentRepository attachmentRepository;
-  private final RedisTemplate<String, Object> redisTemplate;
-  private static final String NOTICE_SEARCH_CACHE_PREFIX = "notice:search:";
-
+  
   @Transactional
   @Override
   public NoticeCreateResponse createNotice(
-      NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
+          NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
     boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
     Notice notice = noticeRepository.save(new Notice(request, hasAttachment));
     log.info("공지사항 등록 = {}", notice.getNoticeId());
@@ -60,7 +62,7 @@ public class NoticeServiceImpl implements NoticeService {
   @Transactional
   @Override
   public NoticeUpdateResponse updateNotice(
-      Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
+          Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
       throws CustomException {
     Notice notice =
         noticeRepository

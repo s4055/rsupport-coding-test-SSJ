@@ -1,4 +1,4 @@
-package com.rsupport.notice.management.dto;
+package com.rsupport.notice.management.dto.common;
 
 import com.rsupport.notice.management.entity.Attachment;
 import lombok.Getter;

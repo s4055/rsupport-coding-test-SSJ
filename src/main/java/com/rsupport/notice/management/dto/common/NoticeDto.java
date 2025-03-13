@@ -1,7 +1,7 @@
-package com.rsupport.notice.management.dto;
+package com.rsupport.notice.management.dto.common;
 
 import com.rsupport.notice.management.entity.Notice;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 import lombok.Getter;

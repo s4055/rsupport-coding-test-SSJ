@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class NoticeImplRepository implements NoticeCustomRepository {
+public class NoticeRepositoryImpl implements NoticeRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
 

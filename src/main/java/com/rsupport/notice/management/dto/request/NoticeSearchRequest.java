@@ -1,4 +1,4 @@
-package com.rsupport.notice.management.dto;
+package com.rsupport.notice.management.dto.request;
 
 import java.time.LocalDate;
 import javax.validation.constraints.*;

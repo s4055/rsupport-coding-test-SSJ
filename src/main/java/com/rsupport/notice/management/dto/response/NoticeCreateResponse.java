@@ -1,4 +1,6 @@
-package com.rsupport.notice.management.dto;
+package com.rsupport.notice.management.dto.response;
+
+import com.rsupport.notice.management.dto.common.CommonResponse;
 
 public class NoticeCreateResponse extends CommonResponse {
 

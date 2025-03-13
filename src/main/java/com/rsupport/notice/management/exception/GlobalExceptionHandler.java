@@ -1,6 +1,6 @@
 package com.rsupport.notice.management.exception;
 
-import com.rsupport.notice.management.dto.CommonResponse;
+import com.rsupport.notice.management.dto.common.CommonResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

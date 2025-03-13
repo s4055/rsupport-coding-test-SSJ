@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface NoticeRepository extends JpaRepository<Notice, Long>, NoticeCustomRepository {
+public interface NoticeRepository extends JpaRepository<Notice, Long>, NoticeRepositoryCustom {
 
   @Modifying
   @Query("UPDATE Notice n SET n.viewCount = n.viewCount + :count WHERE n.noticeId = :noticeId")

@@ -1,7 +1,7 @@
 package com.rsupport.notice.management.entity;
 
-import com.rsupport.notice.management.dto.NoticeCreateRequest;
-import com.rsupport.notice.management.dto.NoticeUpdateRequest;
+import com.rsupport.notice.management.dto.request.NoticeCreateRequest;
+import com.rsupport.notice.management.dto.request.NoticeUpdateRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
