@@ -1,4 +1,4 @@
-package com.rsupport.notice.management.redis;
+package com.rsupport.notice.management.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,6 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-// @EnableCaching
 public class RedisConfig {
 
   @Bean

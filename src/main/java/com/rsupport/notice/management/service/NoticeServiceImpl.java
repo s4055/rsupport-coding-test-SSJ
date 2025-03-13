@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -38,11 +39,11 @@ public class NoticeServiceImpl implements NoticeService {
   private final NoticeViewCountService viewCountService;
   private final NoticeRepository noticeRepository;
   private final AttachmentRepository attachmentRepository;
-  
+
   @Transactional
   @Override
   public NoticeCreateResponse createNotice(
-          NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
+      NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
     boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
     Notice notice = noticeRepository.save(new Notice(request, hasAttachment));
     log.info("공지사항 등록 = {}", notice.getNoticeId());
@@ -62,7 +63,7 @@ public class NoticeServiceImpl implements NoticeService {
   @Transactional
   @Override
   public NoticeUpdateResponse updateNotice(
-          Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
+      Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
       throws CustomException {
     Notice notice =
         noticeRepository
@@ -143,6 +144,7 @@ public class NoticeServiceImpl implements NoticeService {
     return new NoticePageResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notices);
   }
 
+  @Cacheable(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
   @Override
   public NoticeDetailResponse getNotice(Long noticeId) throws CustomException {
     Notice notice =
