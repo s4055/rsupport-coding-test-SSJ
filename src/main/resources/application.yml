@@ -34,7 +34,15 @@ spring:
   redis:
     host: localhost
     port: 6379
-
+#    password:  # 비밀번호가 있으면 입력
+#    timeout: 3000ms  # 연결 타임아웃 (기본 2000ms)
+#    lettuce:
+#      pool:
+#        max-active: 8  # 최대 커넥션 개수
+#        max-idle: 8  # 최대 유휴 커넥션 개수
+#        min-idle: 0  # 최소 유휴 커넥션 개수
+#        max-wait: 1000ms  # 커넥션 풀이 가득 찼을 때 대기 시간
+#
 logging:
   level:
-    root: INFO
+    root: info
