@@ -1,13 +1,12 @@
 package com.rsupport.notice.management.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.rsupport.notice.management.dto.common.AttachmentDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import com.rsupport.notice.management.dto.common.AttachmentDto;
 import lombok.Getter;
 
 @Getter

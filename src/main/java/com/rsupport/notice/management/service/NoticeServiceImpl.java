@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,8 +42,9 @@ public class NoticeServiceImpl implements NoticeService {
   private final NoticeRepository noticeRepository;
   private final AttachmentRepository attachmentRepository;
 
-  @Transactional
   @Override
+  @Transactional
+  @CacheEvict(cacheManager = "cacheManager", value = "notices", allEntries = true)
   public NoticeCreateResponse createNotice(
       NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
     boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
@@ -60,8 +63,9 @@ public class NoticeServiceImpl implements NoticeService {
     return new NoticeCreateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
   }
 
-  @Transactional
   @Override
+  @Transactional
+  @CacheEvict(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
   public NoticeUpdateResponse updateNotice(
       Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
       throws CustomException {
@@ -113,8 +117,9 @@ public class NoticeServiceImpl implements NoticeService {
     return new NoticeUpdateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
   }
 
-  @Transactional
   @Override
+  @Transactional
+  @CacheEvict(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
   public NoticeDeleteResponse deleteNotice(Long noticeId) throws CustomException {
     Notice notice =
         noticeRepository
@@ -138,14 +143,18 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
+  @Cacheable(
+      cacheManager = "cacheManager",
+      value = "notices",
+      key = "#request.page + '_' + #request.size")
   public NoticePageResponse getNotices(NoticePageRequest request) {
     PageRequest pageable = PageRequest.of(request.getPage(), request.getSize());
     Page<Notice> notices = noticeRepository.findAll(pageable);
     return new NoticePageResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage(), notices);
   }
 
-  @Cacheable(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
   @Override
+  @CachePut(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
   public NoticeDetailResponse getNotice(Long noticeId) throws CustomException {
     Notice notice =
         noticeRepository
@@ -158,6 +167,11 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
+  @Cacheable(
+      cacheManager = "cacheManager",
+      value = "notices",
+      key =
+          "#request.searchType + '_' + #request.keyword + '_' + #request.formattedStartDate + '_' + #request.getFormattedEndDate + '_' + #request.page + '_' + #request.size")
   public NoticeSearchResponse searchNotices(NoticeSearchRequest request) {
     PageRequest pageable = PageRequest.of(request.getPage(), request.getSize());
 
