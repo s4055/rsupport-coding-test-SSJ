@@ -16,6 +16,14 @@ spring:
     password:
     initialization-mode: always
     data: classpath:/sql/data.sql
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      idle-timeout: 300000 # 5분
+      connection-timeout: 30000 # 30초
+      max-lifetime: 1800000 # 30분
+      validation-timeout: 5000 # 5초
+      connection-test-query: SELECT 1
   h2:
     console:
       enabled: true
