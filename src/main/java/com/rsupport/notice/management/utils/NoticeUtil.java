@@ -9,6 +9,7 @@ import java.util.UUID;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Slf4j
 @UtilityClass
@@ -48,5 +49,12 @@ public class NoticeUtil {
       log.info("파일이 존재하지 않습니다: {}", file.getAbsolutePath());
       return false;
     }
+  }
+
+  public static String generateDownloadUrl(Long noticeId, Long attachmentId) {
+    return ServletUriComponentsBuilder.fromCurrentContextPath()
+        .path("/api/notices/{noticeId}/attachments/{attachmentId}/download")
+        .buildAndExpand(noticeId, attachmentId)
+        .toUriString();
   }
 }

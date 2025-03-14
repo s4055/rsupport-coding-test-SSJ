@@ -27,6 +27,8 @@ public class NoticeDetailResponse extends CommonResponse {
     this.viewCount = notice.getViewCount() + redisViewCount;
     this.author = notice.getAuthor();
     this.attachments =
-        notice.getAttachments().stream().map(AttachmentDto::new).collect(Collectors.toList());
+        notice.getAttachments().stream()
+            .map(it -> new AttachmentDto(it, notice))
+            .collect(Collectors.toList());
   }
 }
