@@ -3,10 +3,10 @@ package com.rsupport.notice.management.entity;
 import com.rsupport.notice.management.dto.request.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.request.NoticeUpdateRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +15,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Entity
-@Table(name = "Notice", indexes = {
-        @Index(name = "idx_notice_title", columnList = "title"),
-        @Index(name = "idx_notice_create_date", columnList = "create_date")
-})
+@Table(
+    name = "Notice",
+    indexes = {
+      @Index(name = "idx_notice_title", columnList = "title"),
+      @Index(name = "idx_notice_create_date", columnList = "create_date")
+    })
 @AllArgsConstructor
 @NoArgsConstructor
 public class Notice {
@@ -56,6 +58,10 @@ public class Notice {
 
   @OneToMany(mappedBy = "notice")
   private List<Attachment> attachments = new ArrayList<>();
+
+  public String getCreateDateToString() {
+    return this.createDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+  }
 
   public void incrementViewCount(int count) {
     this.viewCount += count;

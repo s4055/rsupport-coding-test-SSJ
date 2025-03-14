@@ -1,6 +1,7 @@
 package com.rsupport.notice.management.dto.request;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,5 +35,13 @@ public class NoticeSearchRequest {
   @AssertTrue(message = "종료일자는 시작일자 보다 이전일 수 없습니다.")
   public boolean isEndDateValid() {
     return endDate.isAfter(startDate);
+  }
+
+  public String getFormattedStartDate() {
+    return startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+  }
+
+  public String getFormattedEndDate() {
+    return endDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
   }
 }
