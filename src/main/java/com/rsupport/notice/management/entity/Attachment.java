@@ -16,6 +16,9 @@ public class Attachment {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long attachmentId;
 
+  @Column(name = "origin_file_name", nullable = false, length = 256)
+  private String originFileName;
+
   @Column(name = "file_name", nullable = false, length = 256)
   private String fileName;
 
@@ -26,7 +29,8 @@ public class Attachment {
   @JoinColumn(name = "notice_id")
   private Notice notice;
 
-  public Attachment(String fileName, String filePath, Notice notice) {
+  public Attachment(String originFileName, String fileName, String filePath, Notice notice) {
+    this.originFileName = originFileName;
     this.fileName = fileName;
     this.filePath = filePath;
     this.notice = notice;

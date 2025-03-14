@@ -21,7 +21,7 @@ public class NoticeUtil {
         uploadFolder.mkdirs();
       }
 
-      String fileName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
+      String fileName = UUID.randomUUID().toString();
       Path filePath = Paths.get(uploadFolder.getAbsolutePath(), fileName);
       multipartFile.transferTo(filePath.toFile());
       return fileName;
