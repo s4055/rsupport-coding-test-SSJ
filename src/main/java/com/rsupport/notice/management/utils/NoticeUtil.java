@@ -1,7 +1,8 @@
 package com.rsupport.notice.management.utils;
 
+import com.rsupport.notice.management.exception.CustomException;
+import com.rsupport.notice.management.exception.ErrorCode;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -13,6 +14,13 @@ import org.springframework.web.multipart.MultipartFile;
 @UtilityClass
 public class NoticeUtil {
 
+  private String getExtension(String originFileName) throws CustomException {
+    if (originFileName == null || !originFileName.contains(".")) {
+      throw new CustomException(ErrorCode.FILE_EXTENSION_FAIL);
+    }
+    return originFileName.substring(originFileName.lastIndexOf(".") + 1).toLowerCase();
+  }
+
   public String uploadFile(String uploadDir, MultipartFile multipartFile) {
     try {
       File uploadFolder = new File(uploadDir);
@@ -21,11 +29,12 @@ public class NoticeUtil {
         uploadFolder.mkdirs();
       }
 
-      String fileName = UUID.randomUUID().toString();
+      String extension = getExtension(multipartFile.getOriginalFilename());
+      String fileName = UUID.randomUUID() + "." + extension;
       Path filePath = Paths.get(uploadFolder.getAbsolutePath(), fileName);
       multipartFile.transferTo(filePath.toFile());
       return fileName;
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new RuntimeException("파일 저장 실패", e);
     }
   }

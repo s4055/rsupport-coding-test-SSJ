@@ -29,10 +29,10 @@ public class Attachment {
   @JoinColumn(name = "notice_id")
   private Notice notice;
 
-  public Attachment(String originFileName, String fileName, String filePath, Notice notice) {
+  public Attachment(String originFileName, String fileName, String uploadDir, Notice notice) {
     this.originFileName = originFileName;
     this.fileName = fileName;
-    this.filePath = filePath;
+    this.filePath = uploadDir + fileName;
     this.notice = notice;
   }
 }

@@ -56,8 +56,7 @@ public class NoticeServiceImpl implements NoticeService {
       for (MultipartFile multipartFile : multipartFileList) {
         String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
         newAttachments.add(
-            new Attachment(
-                multipartFile.getOriginalFilename(), fileName, "/" + uploadDir + fileName, notice));
+            new Attachment(multipartFile.getOriginalFilename(), fileName, uploadDir, notice));
       }
       attachmentRepository.saveAll(newAttachments);
     }
@@ -112,8 +111,7 @@ public class NoticeServiceImpl implements NoticeService {
       for (MultipartFile multipartFile : multipartFileList) {
         String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
         newAttachments.add(
-            new Attachment(
-                multipartFile.getOriginalFilename(), fileName, "/" + uploadDir + fileName, notice));
+            new Attachment(multipartFile.getOriginalFilename(), fileName, uploadDir, notice));
       }
       attachmentRepository.saveAll(newAttachments);
     }
