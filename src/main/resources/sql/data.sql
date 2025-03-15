@@ -31,3 +31,10 @@ VALUES
 (28, '개발자 공지', '개발팀에서 알려드립니다.', '2025-03-28', '2025-04-20', NOW(), 4, '개발팀'),
 (29, '데이터 마이그레이션', '데이터 이전 작업이 예정되어 있습니다.', '2025-03-29', '2025-04-05', NOW(), 9, 'DB팀'),
 (30, '긴급 공지', '중요 공지가 있습니다. 확인 부탁드립니다.', '2025-03-30', '2025-04-30', NOW(), 15, '운영팀');
+
+-- 첨부파일 데이터
+INSERT INTO Attachment (file_name, file_path, origin_file_name, notice_id)
+VALUES
+('c9300a3c-1a97-4d22-8eec-d3cf2a5ff48c.jpg', 'upload/c9300a3c-1a97-4d22-8eec-d3cf2a5ff48c.jpg', 'test1.jpg', 3),
+('2aab363a-40f9-4ea3-bdcc-493690320869.jpg', 'upload/2aab363a-40f9-4ea3-bdcc-493690320869.jpg', 'test2.jpg', 3),
+('7e9ca34c-d382-4f5b-9e96-332d89136594.jpg', 'upload/7e9ca34c-d382-4f5b-9e96-332d89136594.jpg', 'test3.jpg', 3);
