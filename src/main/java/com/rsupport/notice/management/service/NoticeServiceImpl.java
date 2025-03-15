@@ -1,5 +1,6 @@
 package com.rsupport.notice.management.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rsupport.notice.management.dto.common.AttachmentDto;
 import com.rsupport.notice.management.dto.request.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.request.NoticePageRequest;
@@ -44,7 +45,7 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   @Transactional
-  @CacheEvict(cacheManager = "cacheManager", value = "notices", allEntries = true)
+  @CacheEvict(value = "notices", allEntries = true)
   public NoticeCreateResponse createNotice(
       NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
     boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
@@ -66,7 +67,7 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   @Transactional
-  @CacheEvict(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
+  @CacheEvict(value = "notices", key = "#noticeId")
   public NoticeUpdateResponse updateNotice(
       Long noticeId, NoticeUpdateRequest request, List<MultipartFile> multipartFileList)
       throws CustomException {
@@ -121,7 +122,7 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   @Transactional
-  @CacheEvict(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
+  @CacheEvict(value = "notices", key = "#noticeId")
   public NoticeDeleteResponse deleteNotice(Long noticeId) throws CustomException {
     Notice notice =
         noticeRepository
@@ -146,7 +147,7 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   @Cacheable(
-      cacheManager = "cacheManager",
+      cacheManager = "getNoticesCacheManager",
       value = "notices",
       key = "#request.page + '_' + #request.size")
   public NoticePageResponse getNotices(NoticePageRequest request) {
@@ -156,7 +157,7 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
-  @CachePut(cacheManager = "cacheManager", value = "notices", key = "#noticeId")
+  @CachePut(cacheManager = "getNoticeCacheManager", value = "notices", key = "#noticeId")
   public NoticeDetailResponse getNotice(Long noticeId) throws CustomException {
     Notice notice =
         noticeRepository
@@ -170,7 +171,7 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   @Cacheable(
-      cacheManager = "cacheManager",
+      cacheManager = "searchNoticesCacheManager",
       value = "notices",
       key =
           "#request.searchType + '_' + #request.keyword + '_' + #request.formattedStartDate + '_' + #request.getFormattedEndDate + '_' + #request.page + '_' + #request.size")

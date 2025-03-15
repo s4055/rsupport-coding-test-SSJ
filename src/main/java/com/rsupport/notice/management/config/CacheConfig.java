@@ -5,6 +5,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,20 +17,45 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 public class CacheConfig {
 
-  @Bean
-  public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-    RedisCacheConfiguration redisCacheConfiguration =
-        RedisCacheConfiguration.defaultCacheConfig()
-            .serializeKeysWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(
-                    new StringRedisSerializer()))
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(
-                    new GenericJackson2JsonRedisSerializer()))
-            .entryTtl(Duration.ofMinutes(1L));
-
+  @Primary
+  @Bean(name = "defaultCacheManager")
+  public CacheManager defaultCacheManager(RedisConnectionFactory connectionFactory) {
     return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
-        .cacheDefaults(redisCacheConfiguration)
+        .cacheDefaults(getDefaultCacheConfig())
         .build();
+  }
+
+  @Bean(name = "getNoticeCacheManager")
+  public CacheManager getNoticeCacheManager(RedisConnectionFactory connectionFactory) {
+    return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
+            .cacheDefaults(getDefaultCacheConfig())
+            .build();
+  }
+
+  @Bean(name = "getNoticesCacheManager")
+  public CacheManager getNoticesCacheManager(RedisConnectionFactory connectionFactory) {
+    return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
+        .cacheDefaults(getCacheConfig(Duration.ofMinutes(5L)))
+        .build();
+  }
+
+  @Bean(name = "searchNoticesCacheManager")
+  public CacheManager searchNoticesCacheManager(RedisConnectionFactory connectionFactory) {
+    return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
+        .cacheDefaults(getCacheConfig(Duration.ofMinutes(5L)))
+        .build();
+  }
+
+  private RedisCacheConfiguration getDefaultCacheConfig() {
+    return RedisCacheConfiguration.defaultCacheConfig()
+        .serializeKeysWith(
+            RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+        .serializeValuesWith(
+            RedisSerializationContext.SerializationPair.fromSerializer(
+                new GenericJackson2JsonRedisSerializer()));
+  }
+
+  private RedisCacheConfiguration getCacheConfig(Duration duration) {
+    return getDefaultCacheConfig().entryTtl(duration);
   }
 }

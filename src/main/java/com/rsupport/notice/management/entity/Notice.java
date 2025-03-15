@@ -63,10 +63,6 @@ public class Notice {
     return this.createDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
   }
 
-  public void incrementViewCount(int count) {
-    this.viewCount += count;
-  }
-
   public Notice(NoticeCreateRequest request, boolean hasAttachment) {
     this.title = request.getTitle();
     this.content = request.getContent();
