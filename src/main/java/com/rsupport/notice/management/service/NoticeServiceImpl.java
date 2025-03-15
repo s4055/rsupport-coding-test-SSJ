@@ -16,7 +16,6 @@ import com.rsupport.notice.management.repository.NoticeRepository;
 import com.rsupport.notice.management.utils.NoticeUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,43 +75,17 @@ public class NoticeServiceImpl implements NoticeService {
             .orElseThrow(() -> new CustomException(ErrorCode.NO_SUCH_NOTICE));
 
     boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
-    boolean isExistAttachments =
-        request.getAttachments() != null && !request.getAttachments().isEmpty();
 
-    notice.updateNotice(request, hasAttachment, isExistAttachments);
+    if (request.getDeleteAttachments() != null && !request.getDeleteAttachments().isEmpty()) {
+      List<Long> deleteId = request.getDeleteAttachments().stream().map(AttachmentDto::getAttachmentId).collect(Collectors.toList());
+      List<Attachment> delAttachments = attachmentRepository.findAllById(deleteId);
+      delAttachments.forEach(file -> NoticeUtil.deleteFile(uploadDir, file.getFileName()));
+      attachmentRepository.deleteAll(delAttachments);
 
-    noticeRepository.save(notice);
-
-    List<Attachment> attachments = attachmentRepository.findByNotice_noticeId(notice.getNoticeId());
-    List<Attachment> filesToDelete = new ArrayList<>();
-
-    // 기존 첨부파일 조회
-    if (isExistAttachments) {
-      Set<String> oldFileNames =
-          request.getAttachments().stream()
-              .map(AttachmentDto::getFileName)
-              .collect(Collectors.toSet());
-
-      // 변경된 첨부파일 목록 (삭제된 첨부파일 찾기)
-      filesToDelete =
-          attachments.stream()
-              .filter(file -> !oldFileNames.contains(file.getFileName()))
-              .collect(Collectors.toList());
-    } else {
-      filesToDelete = attachments;
+      hasAttachment = delAttachments.size() > deleteId.size();
     }
 
-    // 첨부파일 삭제
-    if (!filesToDelete.isEmpty()) {
-      filesToDelete.forEach(
-          file -> {
-            NoticeUtil.deleteFile(uploadDir, file.getFileName());
-            attachmentRepository.delete(file);
-          });
-    }
-
-    // 신규 첨부파일 저장
-    if (hasAttachment) {
+    if (multipartFileList != null && !multipartFileList.isEmpty()) {
       List<Attachment> newAttachments = new ArrayList<>();
       for (MultipartFile multipartFile : multipartFileList) {
         String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
@@ -121,6 +94,10 @@ public class NoticeServiceImpl implements NoticeService {
       }
       attachmentRepository.saveAll(newAttachments);
     }
+
+    notice.updateNotice(request, hasAttachment);
+
+    noticeRepository.save(notice);
 
     return new NoticeUpdateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
   }

@@ -27,7 +27,7 @@ public class NoticeUpdateRequest {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endDate;
 
-  private List<AttachmentDto> attachments;
+  private List<AttachmentDto> deleteAttachments;
 
   @AssertTrue(message = "공지 시작일시는 현재 일시 보다 이전일 수 없습니다.")
   public boolean isStartDateValid() {

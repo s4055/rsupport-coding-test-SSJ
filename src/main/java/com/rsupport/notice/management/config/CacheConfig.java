@@ -28,8 +28,8 @@ public class CacheConfig {
   @Bean(name = "getNoticeCacheManager")
   public CacheManager getNoticeCacheManager(RedisConnectionFactory connectionFactory) {
     return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
-            .cacheDefaults(getDefaultCacheConfig())
-            .build();
+        .cacheDefaults(getDefaultCacheConfig())
+        .build();
   }
 
   @Bean(name = "getNoticesCacheManager")

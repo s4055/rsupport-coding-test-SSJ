@@ -59,8 +59,34 @@ public class Notice {
   @OneToMany(mappedBy = "notice")
   private List<Attachment> attachments = new ArrayList<>();
 
+  public void addAttachment(Attachment attachment) {
+    attachments.add(attachment);
+    attachment.addNotice(this);
+  }
+
   public String getCreateDateToString() {
     return this.createDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+  }
+
+  public Notice(
+      Long noticeId,
+      String title,
+      String content,
+      LocalDateTime startDate,
+      LocalDateTime endDate,
+      LocalDateTime createDate,
+      int viewCount,
+      String author,
+      boolean hasAttachment) {
+    this.noticeId = noticeId;
+    this.title = title;
+    this.content = content;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.createDate = createDate;
+    this.viewCount = viewCount;
+    this.author = author;
+    this.hasAttachment = hasAttachment;
   }
 
   public Notice(NoticeCreateRequest request, boolean hasAttachment) {
@@ -73,12 +99,11 @@ public class Notice {
     this.hasAttachment = hasAttachment;
   }
 
-  public void updateNotice(
-      NoticeUpdateRequest request, boolean hasAttachment, boolean isExistAttachments) {
+  public void updateNotice(NoticeUpdateRequest request, boolean hasAttachment) {
     this.title = request.getTitle();
     this.content = request.getContent();
     this.startDate = request.getStartDate();
     this.endDate = request.getEndDate();
-    this.hasAttachment = isExistAttachments || hasAttachment;
+    this.hasAttachment = hasAttachment;
   }
 }
