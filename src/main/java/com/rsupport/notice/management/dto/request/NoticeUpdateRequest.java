@@ -8,7 +8,9 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class NoticeUpdateRequest {
   @NotBlank(message = "제목은 필수 입니다.")

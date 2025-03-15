@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
+@Setter
 public class NoticeCreateRequest {
   @NotBlank(message = "작성자는 필수 입니다.")
   private String author;

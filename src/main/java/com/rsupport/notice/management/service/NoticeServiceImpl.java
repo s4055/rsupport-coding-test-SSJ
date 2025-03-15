@@ -1,6 +1,5 @@
 package com.rsupport.notice.management.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rsupport.notice.management.dto.common.AttachmentDto;
 import com.rsupport.notice.management.dto.request.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.request.NoticePageRequest;
@@ -84,18 +83,24 @@ public class NoticeServiceImpl implements NoticeService {
 
     noticeRepository.save(notice);
 
-    // 기존 첨부파일 조회
     List<Attachment> attachments = attachmentRepository.findByNotice_noticeId(notice.getNoticeId());
-    Set<String> oldFileNames =
-        request.getAttachments().stream()
-            .map(AttachmentDto::getFileName)
-            .collect(Collectors.toSet());
+    List<Attachment> filesToDelete = new ArrayList<>();
 
-    // 변경된 첨부파일 목록 (삭제된 첨부파일 찾기)
-    List<Attachment> filesToDelete =
-        attachments.stream()
-            .filter(file -> !oldFileNames.contains(file.getFileName()))
-            .collect(Collectors.toList());
+    // 기존 첨부파일 조회
+    if (isExistAttachments) {
+      Set<String> oldFileNames =
+          request.getAttachments().stream()
+              .map(AttachmentDto::getFileName)
+              .collect(Collectors.toSet());
+
+      // 변경된 첨부파일 목록 (삭제된 첨부파일 찾기)
+      filesToDelete =
+          attachments.stream()
+              .filter(file -> !oldFileNames.contains(file.getFileName()))
+              .collect(Collectors.toList());
+    } else {
+      filesToDelete = attachments;
+    }
 
     // 첨부파일 삭제
     if (!filesToDelete.isEmpty()) {

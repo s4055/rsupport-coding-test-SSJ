@@ -19,7 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
     name = "Notice",
     indexes = {
       @Index(name = "idx_notice_title", columnList = "title"),
-      @Index(name = "idx_notice_create_date", columnList = "create_date")
+      @Index(name = "idx_notice_title_content", columnList = "title,content")
     })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,7 +32,7 @@ public class Notice {
   @Column(name = "title", nullable = false, length = 30)
   private String title;
 
-  @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+  @Column(name = "content", nullable = false, length = 3000)
   private String content;
 
   @Column(name = "start_date", nullable = false)
