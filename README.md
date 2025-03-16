@@ -24,40 +24,44 @@
 - Java 1.8
 - Spring Boot 2.4.2
 - H2
-- Hibernate
-- JPA
-- Redis
-- Cache
+- Hibernate, JPA
+- Redis (캐시 및 조회수 관리)
+- Cache (검색 최적화)
 ### 실행 방법
 1. 프로젝트 Clone
-2. Redis 설치 (https://github.com/microsoftarchive/redis)
+2. Redis 설치 
+   - window: https://github.com/microsoftarchive/redis
+   - mac: brew install redis
 3. 프로젝트 실행
 ### 핵심 문제해결 전략
-- 공지사항 등록
-  - 등록이므로 서비스 트랜잭션 처리
-  - @CacheEvict 사용해서 기존 캐시(목록, 검색) 삭제 처리
-- 공지사항 수정
-  - 수정이므로 서비스 트랜잭션 처리
+- **공지사항 등록**
+  - 트랜잭션을 활용하여 데이터 무결성 보장
+  - @CacheEvict 사용해서 기존 캐시(목록, 검색) 삭제 -> 최신 데이터 유지
+- **공지사항 수정**
+  - 트랜잭션을 활용하여 데이터 무결성 보장
   - 파일 서버가 분리가 되어 있지 않아 요청에 삭제 리스트와 신규 리스트를 따로 받아 처리
-  - @CacheEvict 사용해서 기존 캐시(목록, 검색) 삭제 처리
-- 공지사항 삭제
-  - 삭제이므로 서비스 트랜잭션 처리
-  - @CacheEvict 사용해서 기존 캐시(목록, 검색) 삭제 처리
-- 공지사항 목록
-  - @Cacheable 사용해서 캐시 처리, 키 값은 page_size
+  - @CacheEvict 사용해서 기존 캐시(목록, 검색) 삭제
+- **공지사항 삭제**
+  - 트랜잭션을 활용하여 데이터 무결성 보장
+  - @CacheEvict 사용해서 기존 캐시(목록, 검색) 삭제
+- **공지사항 목록**
+  - @Cacheable 사용해서 캐시 처리로 조회 속도 개선
+    - Key: page_size
   - CacheManager 통해 만료 시간 5분 설정
     - 공지사항 등록, 수정, 삭제로 변동이 발생될 확률이 높으므로
-  - 페이징 처리로 DB 부하 감소
-- 공지사항 상세
+  - 대량 데이터 조회 시 페이징 처리로 DB 부하 감소
+- **공지사항 상세**
   - 조회수 증가 Redis 처리
+    - 실시간 조회수 증가 시 DB 부하 방지
     - 호출 시 Notice 조회수 + Redis 조회수 응답
     - 1분 단위로 Redis 저장된 조회수 Notice 반영
-  - @Cacheable 사용하려고 했으나 Redis 통한 조회수 동기화 처리가 되지 않아 @CachePut 채택
-- 공지사항 검색
-  - @Cacheable 사용해서 캐시 처리, 키 값은 searchType_keyword_startDate_endDate_page_size
-  - CacheManager 통해 만료 시간 5분 설정'
+  - @CachePut 사용하여 조회수 증가 시 캐시 일관성 유지
+- **공지사항 검색**
+  - @Cacheable 사용해서 캐시 처리로 조회 속도 개선
+    - Key: searchType_keyword_startDate_endDate_page_size
+  - CacheManager 통해 만료 시간 5분 설정
     - 공지사항 등록, 수정, 삭제로 변동이 발생될 확률이 높으므로
-  - 페이징 처리로 DB 부하 감소
+  - 대량 데이터 조회 시 페이징 처리로 DB 부하 감소
   - 인덱스를 '등록일자', '제목', '제목 + 내용'으로 조회 성능 최적화
   - QueryDSL 이용해서 searchType 따른 동적 쿼리로 조회 성능 최적화
 ### 프로젝트 구조

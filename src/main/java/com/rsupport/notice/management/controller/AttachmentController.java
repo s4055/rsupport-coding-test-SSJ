@@ -4,6 +4,9 @@ import com.rsupport.notice.management.dto.request.*;
 import com.rsupport.notice.management.dto.response.*;
 import com.rsupport.notice.management.exception.CustomException;
 import com.rsupport.notice.management.service.AttachmentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,11 @@ public class AttachmentController {
    * @return the response entity
    * @throws CustomException the custom exception
    */
+  @Operation(summary = "첨부파일 다운로드")
+  @Parameters({
+    @Parameter(name = "noticeId", description = "공지사항 식별자", example = "3"),
+    @Parameter(name = "attachmentId", description = "첨부파일 식별자", example = "1")
+  })
   @GetMapping("/{noticeId}/attachments/{attachmentId}/download")
   public ResponseEntity<Resource> downloadAttachment(
       @ModelAttribute @Valid AttachmentDownloadRequest request) throws CustomException {
