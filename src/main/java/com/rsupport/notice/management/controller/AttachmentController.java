@@ -22,7 +22,13 @@ public class AttachmentController {
 
   private final AttachmentService attachmentService;
 
-  // 첨부파일 다운로드
+  /**
+   * 첨부파일 다운로드
+   *
+   * @param request the request
+   * @return the response entity
+   * @throws CustomException the custom exception
+   */
   @GetMapping("/{noticeId}/attachments/{attachmentId}/download")
   public ResponseEntity<Resource> downloadAttachment(
       @ModelAttribute @Valid AttachmentDownloadRequest request) throws CustomException {

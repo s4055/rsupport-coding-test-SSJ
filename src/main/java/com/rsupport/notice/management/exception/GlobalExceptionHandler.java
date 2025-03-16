@@ -12,7 +12,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(basePackages = "com.rsupport.notice.management")
 public class GlobalExceptionHandler {
 
-  // 커스텀 예외
+  /**
+   * 커스텀 예외
+   *
+   * @param e the e
+   * @return the response entity
+   */
   @ExceptionHandler(CustomException.class)
   public ResponseEntity<CommonResponse> handleCustomException(CustomException e) {
     printRestControllerException(e);
@@ -20,7 +25,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(e.getErrorHttpStatus()).body(errorResponse);
   }
 
-  // 유효성 검사 예외
+  /**
+   * 유효성 검사 예외
+   *
+   * @param e the e
+   * @return the response entity
+   */
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<CommonResponse> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException e) {
@@ -31,7 +41,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
   }
 
-  // 바인딩 예외
+  /**
+   * 바인딩 예외
+   *
+   * @param e the e
+   * @return the response entity
+   */
   @ExceptionHandler(BindException.class)
   public ResponseEntity<CommonResponse> handleBindException(BindException e) {
     printRestControllerException(e);
@@ -41,7 +56,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
   }
 
-  // 나머지 예외
+  /**
+   * 나머지 예외
+   *
+   * @param e the e
+   * @return the response entity
+   */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<CommonResponse> handleGlobalException(Exception e) {
     printRestControllerException(e);
@@ -51,6 +71,11 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
   }
 
+  /**
+   * 공통 오류 로그 출력 함수
+   *
+   * @param e the e
+   */
   private void printRestControllerException(Exception e) {
     log.error("Exception Occurred ", e);
   }

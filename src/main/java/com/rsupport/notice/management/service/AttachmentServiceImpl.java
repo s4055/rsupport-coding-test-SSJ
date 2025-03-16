@@ -19,6 +19,13 @@ public class AttachmentServiceImpl implements AttachmentService {
 
   private final AttachmentRepository attachmentRepository;
 
+  /**
+   * 첨부파일 다운로드
+   *
+   * @param request the request
+   * @return the response entity
+   * @throws CustomException the custom exception
+   */
   @Override
   public Resource downloadAttachment(AttachmentDownloadRequest request) throws CustomException {
     Attachment attachment =

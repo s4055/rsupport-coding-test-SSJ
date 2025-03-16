@@ -24,7 +24,13 @@ public class NoticeController {
 
   private final NoticeService noticeService;
 
-  // 공지시항 등록
+  /**
+   * 공지사항 등록
+   *
+   * @param request the request
+   * @param multipartFileList the multipart file list
+   * @return the response entity
+   */
   @PostMapping
   public ResponseEntity<NoticeCreateResponse> createNotice(
       @RequestPart(value = "request") @Valid NoticeCreateRequest request,
@@ -33,7 +39,15 @@ public class NoticeController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  // 공지사항 수정
+  /**
+   * 공지사항 수정
+   *
+   * @param noticeId the notice id
+   * @param request the request
+   * @param multipartFileList the multipart file list
+   * @return the response entity
+   * @throws CustomException the custom exception
+   */
   @PutMapping("/{noticeId}")
   public ResponseEntity<NoticeUpdateResponse> updateNotice(
       @PathVariable("noticeId") Long noticeId,
@@ -45,7 +59,13 @@ public class NoticeController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  // 공지사항 삭제
+  /**
+   * 공지시항 삭제
+   *
+   * @param noticeId the notice id
+   * @return the response entity
+   * @throws CustomException the custom exception
+   */
   @DeleteMapping("/{noticeId}")
   public ResponseEntity<NoticeDeleteResponse> deleteNotice(@PathVariable("noticeId") Long noticeId)
       throws CustomException {
@@ -53,7 +73,12 @@ public class NoticeController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  // 공지사항 목록
+  /**
+   * 공지사항 목록
+   *
+   * @param request the request
+   * @return the notices
+   */
   @GetMapping
   public ResponseEntity<NoticePageResponse> getNotices(
       @ModelAttribute @Valid NoticePageRequest request) {
@@ -61,7 +86,13 @@ public class NoticeController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  // 공지사항 상세
+  /**
+   * 공지시항 상세
+   *
+   * @param noticeId the notice id
+   * @return the notice
+   * @throws CustomException the custom exception
+   */
   @GetMapping("/{noticeId}")
   public ResponseEntity<NoticeDetailResponse> getNotice(@PathVariable("noticeId") Long noticeId)
       throws CustomException {
@@ -69,7 +100,12 @@ public class NoticeController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  // 공지사항 검색
+  /**
+   * 공지사항 검색
+   *
+   * @param request the request
+   * @return the response entity
+   */
   @GetMapping("/search")
   public ResponseEntity<NoticeSearchResponse> searchNotices(
       @ModelAttribute @Valid NoticeSearchRequest request) {
