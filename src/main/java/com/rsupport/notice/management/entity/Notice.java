@@ -19,6 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
     name = "Notice",
     indexes = {
       @Index(name = "idx_notice_title", columnList = "title"),
+      @Index(name = "idx_notice_create_date", columnList = "create_date"),
       @Index(name = "idx_notice_title_content", columnList = "title,content")
     })
 @AllArgsConstructor
