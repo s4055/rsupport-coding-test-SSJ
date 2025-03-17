@@ -43,8 +43,8 @@ public class Notice {
   private LocalDateTime endDate;
 
   @CreationTimestamp
-  @Column(name = "create_date", nullable = false)
-  private LocalDateTime createDate;
+  @Column(name = "create_date", nullable = false, updatable = false)
+  private LocalDateTime createDate = LocalDateTime.now();
 
   @ColumnDefault("0")
   @Column(name = "view_count")
@@ -95,7 +95,6 @@ public class Notice {
     this.content = request.getContent();
     this.startDate = request.getStartDate();
     this.endDate = request.getEndDate();
-    this.createDate = LocalDateTime.now();
     this.author = request.getAuthor();
     this.hasAttachment = hasAttachment;
   }

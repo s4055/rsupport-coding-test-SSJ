@@ -22,11 +22,11 @@ public class Attachment {
   @Column(name = "file_name", nullable = false, length = 256)
   private String fileName;
 
-  @Column(name = "file_path", nullable = false, length = 100)
+  @Column(name = "file_path", nullable = false, length = 512)
   private String filePath;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "notice_id")
+  @JoinColumn(name = "notice_id", nullable = false)
   private Notice notice;
 
   public void addNotice(Notice notice) {
