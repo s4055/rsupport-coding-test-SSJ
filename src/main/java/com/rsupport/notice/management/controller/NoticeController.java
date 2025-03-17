@@ -6,6 +6,7 @@ import com.rsupport.notice.management.dto.request.NoticeSearchRequest;
 import com.rsupport.notice.management.dto.request.NoticeUpdateRequest;
 import com.rsupport.notice.management.dto.response.*;
 import com.rsupport.notice.management.exception.CustomException;
+import com.rsupport.notice.management.service.FileStorageService;
 import com.rsupport.notice.management.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class NoticeController {
 
   private final NoticeService noticeService;
+  private final FileStorageService fileStorageService;
 
   /**
    * 공지사항 등록

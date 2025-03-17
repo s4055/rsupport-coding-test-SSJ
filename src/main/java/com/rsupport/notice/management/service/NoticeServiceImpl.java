@@ -14,8 +14,8 @@ import com.rsupport.notice.management.redis.NoticeViewCountService;
 import com.rsupport.notice.management.repository.AttachmentRepository;
 import com.rsupport.notice.management.repository.NoticeRepository;
 import com.rsupport.notice.management.utils.NoticeUtil;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +25,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +41,7 @@ public class NoticeServiceImpl implements NoticeService {
   private final NoticeViewCountService viewCountService;
   private final NoticeRepository noticeRepository;
   private final AttachmentRepository attachmentRepository;
+  private final FileStorageService fileStorageService;
 
   /**
    * 공지사항 등록
@@ -48,6 +50,7 @@ public class NoticeServiceImpl implements NoticeService {
    * @param multipartFileList the multipart file list
    * @return the response entity
    */
+  @Async(value = "asyncTaskExecutor")
   @Override
   @Transactional
   @CacheEvict(value = "notices", allEntries = true)
@@ -57,14 +60,24 @@ public class NoticeServiceImpl implements NoticeService {
     Notice notice = noticeRepository.save(new Notice(request, hasAttachment));
     log.info("공지사항 등록 = {}", notice.getNoticeId());
 
+    List<Map<String, String>> fileList = new ArrayList<>();
+    List<Attachment> newAttachments = new ArrayList<>();
     if (hasAttachment) {
-      List<Attachment> newAttachments = new ArrayList<>();
       for (MultipartFile multipartFile : multipartFileList) {
-        String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
-        newAttachments.add(
-            new Attachment(multipartFile.getOriginalFilename(), fileName, uploadDir, notice));
+        Map<String, String> map = new HashMap<>();
+        String fileName = UUID.randomUUID().toString();
+        newAttachments.add(new Attachment(multipartFile.getOriginalFilename(), fileName, uploadDir, notice));
       }
       attachmentRepository.saveAll(newAttachments);
+      fileStorageService.test(multipartFileList);
+      //      List<Attachment> newAttachments = new ArrayList<>();
+      //      for (MultipartFile multipartFile : multipartFileList) {
+      //        String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
+      //        newAttachments.add(
+      //            new Attachment(multipartFile.getOriginalFilename(), fileName, uploadDir,
+      // notice));
+      //      }
+      //      attachmentRepository.saveAll(newAttachments);
     }
 
     return new NoticeCreateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
