@@ -15,7 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @UtilityClass
 public class NoticeUtil {
 
-  private String getExtension(String originFileName) throws CustomException {
+  public String getExtension(String originFileName) throws CustomException {
     if (originFileName == null || !originFileName.contains(".")) {
       throw new CustomException(ErrorCode.FILE_EXTENSION_FAIL);
     }

@@ -11,6 +11,8 @@ import com.rsupport.notice.management.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +43,7 @@ public class NoticeController {
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<NoticeCreateResponse> createNotice(
       @RequestPart(value = "request") @Valid NoticeCreateRequest request,
-      @RequestPart(value = "file", required = false) List<MultipartFile> multipartFileList) {
+      @RequestPart(value = "file", required = false) List<MultipartFile> multipartFileList) throws IOException, CustomException {
     NoticeCreateResponse response = noticeService.createNotice(request, multipartFileList);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }

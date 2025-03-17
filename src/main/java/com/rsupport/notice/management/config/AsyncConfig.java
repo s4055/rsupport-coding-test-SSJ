@@ -14,10 +14,11 @@ public class AsyncConfig {
 
     @Bean(name = "asyncTaskExecutor")
     public Executor taskExecutor() {
+        int i = 500;
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(200);   // 기본 실행할 스레드 개수
-        executor.setMaxPoolSize(300);   // 최대 스레드 개수
-        executor.setQueueCapacity(400); // 큐에 저장할 요청 개수
+        executor.setCorePoolSize(i);   // 기본 실행할 스레드 개수
+        executor.setMaxPoolSize(i * 2);   // 최대 스레드 개수
+        executor.setQueueCapacity(i * 3); // 큐에 저장할 요청 개수
         executor.setThreadNamePrefix("Async-");
 //        executor.setKeepAliveSeconds(60);       // 유휴 상태의 스레드를 60초 후 종료
         executor.initialize();

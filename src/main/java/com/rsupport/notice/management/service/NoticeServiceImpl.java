@@ -1,5 +1,6 @@
 package com.rsupport.notice.management.service;
 
+import com.rsupport.notice.management.FileUploadEvent;
 import com.rsupport.notice.management.dto.common.AttachmentDto;
 import com.rsupport.notice.management.dto.request.NoticeCreateRequest;
 import com.rsupport.notice.management.dto.request.NoticePageRequest;
@@ -14,8 +15,9 @@ import com.rsupport.notice.management.redis.NoticeViewCountService;
 import com.rsupport.notice.management.repository.AttachmentRepository;
 import com.rsupport.notice.management.repository.NoticeRepository;
 import com.rsupport.notice.management.utils.NoticeUtil;
-
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +25,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +44,8 @@ public class NoticeServiceImpl implements NoticeService {
   private final NoticeRepository noticeRepository;
   private final AttachmentRepository attachmentRepository;
   private final FileStorageService fileStorageService;
+  private final ApplicationEventPublisher eventPublisher;
+
 
   /**
    * 공지사항 등록
@@ -50,35 +54,35 @@ public class NoticeServiceImpl implements NoticeService {
    * @param multipartFileList the multipart file list
    * @return the response entity
    */
-  @Async(value = "asyncTaskExecutor")
   @Override
   @Transactional
   @CacheEvict(value = "notices", allEntries = true)
   public NoticeCreateResponse createNotice(
-      NoticeCreateRequest request, List<MultipartFile> multipartFileList) {
+      NoticeCreateRequest request, List<MultipartFile> multipartFileList)
+      throws IOException, CustomException {
     boolean hasAttachment = multipartFileList != null && !multipartFileList.isEmpty();
     Notice notice = noticeRepository.save(new Notice(request, hasAttachment));
     log.info("공지사항 등록 = {}", notice.getNoticeId());
 
-    List<Map<String, String>> fileList = new ArrayList<>();
-    List<Attachment> newAttachments = new ArrayList<>();
-    if (hasAttachment) {
-      for (MultipartFile multipartFile : multipartFileList) {
-        Map<String, String> map = new HashMap<>();
-        String fileName = UUID.randomUUID().toString();
-        newAttachments.add(new Attachment(multipartFile.getOriginalFilename(), fileName, uploadDir, notice));
-      }
-      attachmentRepository.saveAll(newAttachments);
-      fileStorageService.test(multipartFileList);
-      //      List<Attachment> newAttachments = new ArrayList<>();
-      //      for (MultipartFile multipartFile : multipartFileList) {
-      //        String fileName = NoticeUtil.uploadFile(uploadDir, multipartFile);
-      //        newAttachments.add(
-      //            new Attachment(multipartFile.getOriginalFilename(), fileName, uploadDir,
-      // notice));
-      //      }
-      //      attachmentRepository.saveAll(newAttachments);
-    }
+    eventPublisher.publishEvent(new FileUploadEvent(notice, multipartFileList));
+    log.info("서비스 종료");
+//
+//    long startTime = System.currentTimeMillis();
+//
+//    List<CompletableFuture<Attachment>> futures =
+//        multipartFileList.stream()
+//            .map(it -> fileStorageService.storeFileAsync(it, notice))
+//            .collect(Collectors.toList());
+//
+//    long duration = System.currentTimeMillis() - startTime;
+//    log.info("**************************************** {}", duration);
+//
+//    List<Attachment> savedFiles = futures.stream()
+//            .map(CompletableFuture::join)
+//            .collect(Collectors.toList());
+//
+//    notice.add(savedFiles);
+//    noticeRepository.save(notice); // 파일 정보
 
     return new NoticeCreateResponse(ErrorCode.OK.getResultCode(), ErrorCode.OK.getMessage());
   }

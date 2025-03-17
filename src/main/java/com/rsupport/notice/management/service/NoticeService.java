@@ -6,6 +6,8 @@ import com.rsupport.notice.management.dto.request.NoticeSearchRequest;
 import com.rsupport.notice.management.dto.request.NoticeUpdateRequest;
 import com.rsupport.notice.management.dto.response.*;
 import com.rsupport.notice.management.exception.CustomException;
+
+import java.io.IOException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +21,7 @@ public interface NoticeService {
    * @return the notice create response
    */
   NoticeCreateResponse createNotice(
-      NoticeCreateRequest request, List<MultipartFile> multipartFileList);
+      NoticeCreateRequest request, List<MultipartFile> multipartFileList) throws IOException, CustomException;
 
   /**
    * 공지사항 수정

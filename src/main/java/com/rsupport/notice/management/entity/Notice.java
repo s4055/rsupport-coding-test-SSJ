@@ -57,7 +57,7 @@ public class Notice {
   @Column(name = "has_attachment", nullable = false)
   private Boolean hasAttachment = false;
 
-  @OneToMany(mappedBy = "notice")
+  @OneToMany(mappedBy = "notice", cascade = CascadeType.PERSIST)
   private List<Attachment> attachments = new ArrayList<>();
 
   public void addAttachment(Attachment attachment) {
@@ -105,5 +105,9 @@ public class Notice {
     this.startDate = request.getStartDate();
     this.endDate = request.getEndDate();
     this.hasAttachment = hasAttachment;
+  }
+
+  public void add(List<Attachment> savedFiles) {
+    this.attachments = savedFiles;
   }
 }
