@@ -33,6 +33,11 @@
    - window: https://github.com/microsoftarchive/redis
    - mac: brew install redis
 3. 프로젝트 실행
+### 테스트
+- h2
+  - http://localhost:8081/h2-console
+- swagger
+  - http://localhost:8081/swagger-ui/index.html
 ### 핵심 문제해결 전략
 - **공지사항 등록**
   - 트랜잭션을 활용하여 데이터 무결성 보장
